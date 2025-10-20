@@ -10,3 +10,17 @@ addons/panku_console/
 
 #webrtc addon. Probably later could be managed by gd-plug
 webrtc/
+
+# Modelica integration artifacts
+addons/modelica_integration/bin/*.so
+addons/modelica_integration/bin/*.dll
+addons/modelica_integration/bin/*.dylib
+
+# Compiled Modelica models
+apps/modelica/build/
+
+# Keep these tracked
+!addons/modelica_integration/modelica.gdextension
+!apps/modelica/models/**/*.mo
+!apps/modelica/build_models.sh
+.DS_Store
