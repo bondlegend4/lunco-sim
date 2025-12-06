@@ -13,7 +13,7 @@ config_version=5
 config/name="LunCoSim"
 config/version="0.4.4"
 run/main_scene="uid://c4vgq4emswcqj"
-config/features=PackedStringArray("4.5", "GL Compatibility")
+config/features=PackedStringArray("4.6", "GL Compatibility")
 run/low_processor_mode=true
 boot_splash/bg_color=Color(0, 0, 0, 1)
 boot_splash/image="res://assets/logos/splash.png"
@@ -23,7 +23,6 @@ config/icon="res://assets/logos/logo.svg"
 
 StateManager="*res://core/singletones/state-manager.gd"
 LCNet="*res://core/singletones/networking.gd"
-LCUtil="*res://core/singletones/utils.gd"
 LCWindows="*res://core/singletones/windows-manager.gd"
 EntitiesDB="*res://core/singletones/entities-manager.gd"
 Profile="*res://core/singletones/profile.gd"
@@ -34,6 +33,11 @@ ReplayManager="*res://core/singletones/replay-manager.gd"
 ReplayShortcut="*res://core/singletones/replay-shortcut.gd"
 NotificationManager="*res://core/singletones/notification-manager.gd"
 UIHelper="*res://themes/ui_helper.gd"
+BuilderManager="*res://core/singletones/builder_manager.gd"
+TelemetryManager="*res://core/telemetry/telemetry_manager.gd"
+TelemetryServer="*res://core/telemetry/telemetry_server.gd"
+LCResourceRegistry="*res://core/resources/resource_registry.gd"
+LCRecipeRegistry="*res://core/resources/recipe_registry.gd"
 
 [display]
 
@@ -74,7 +78,6 @@ directory_path="res://data/godot-idea-board/"
 theme/default_font_antialiasing=2
 theme/default_font_hinting=2
 theme/default_font_subpixel_positioning=3
-theme/default_font_multichannel_signed_distance_field=true
 theme/default_font_generate_mipmaps=true
 theme/lcd_subpixel_layout=0
 theme/custom="uid://hve1e7mnexbi"
@@ -500,18 +503,18 @@ toggle_recording={
 
 [rendering]
 
-lights_and_shadows/directional_shadow/soft_shadow_filter_quality=0
-lights_and_shadows/positional_shadow/soft_shadow_filter_quality=0
-driver/depth_prepass/enable=false
+lights_and_shadows/directional_shadow/size=8192
+lights_and_shadows/directional_shadow/soft_shadow_filter_quality=3
+lights_and_shadows/positional_shadow/soft_shadow_filter_quality=3
 environment/ssao/quality=0
 environment/ssil/quality=0
 anti_aliasing/screen_space_roughness_limiter/enabled=false
 environment/glow/upscale_mode=0
-environment/screen_space_reflection/roughness_quality=0
 environment/subsurface_scattering/subsurface_scattering_quality=0
 global_illumination/sdfgi/frames_to_converge=0
 environment/volumetric_fog/use_filter=0
 occlusion_culling/use_occlusion_culling=true
+environment/screen_space_reflection/roughness_quality=0
 
 [shader_globals]
 

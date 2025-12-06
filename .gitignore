@@ -23,4 +23,12 @@ apps/modelica/build/
 !addons/modelica_integration/modelica.gdextension
 !apps/modelica/models/**/*.mo
 !apps/modelica/build_models.sh
+
+# SSL certificates (security)
+.cert/
+
+# Raw data, e.g. PUGs
+.raw_data/
+
+# macOS
 .DS_Store

@@ -1,7 +1,7 @@
 class_name LCRoverInputAdapter
-extends Node
+extends LCInputAdapter
 
-@export var target: Node
+# target is inherited from LCInputAdapter
 
 # Input sensitivity and deadzone settings
 @export var MOTOR_SENSITIVITY := 1.0
@@ -9,46 +9,48 @@ extends Node
 @export var INPUT_DEADZONE := 0.1
 
 func _ready():
-	# Create a timer to periodically check and report the state
-	var timer = Timer.new()
-	timer.wait_time = 2.0
-	timer.one_shot = false
-	timer.autostart = true
-	timer.connect("timeout", Callable(self, "_on_timer_timeout"))
-	add_child(timer)
+	_setup_input_mappings()
 
-func _on_timer_timeout():
-	var _target = target
+func _setup_input_mappings():
+	# Crab Steering
+	if not InputMap.has_action("crab_left"):
+		InputMap.add_action("crab_left")
+		var event = InputEventKey.new()
+		event.keycode = KEY_E
+		InputMap.action_add_event("crab_left", event)
 	
-	# Check target validity
-	if not target:
-		return
-		
-	if target is LCAvatar:
-		_target = target.target
-	
-	if not (_target is LCRoverController):
-		return
+	if not InputMap.has_action("crab_right"):
+		InputMap.add_action("crab_right")
+		var event = InputEventKey.new()
+		event.keycode = KEY_Q
+		InputMap.action_add_event("crab_right", event)
+
+
 
 func _input(_event):
 	# Only process inputs if we have a target
 	if not target:
 		return
 		
-	var _target = target
-	
-	# If target is an Avatar, get its current target
-	if target is LCAvatar:
-		_target = target.target
+	var _target = get_resolved_target()
 		
 	# Check if we have a compatible rover controller
-	var is_compatible_controller = _target is LCRoverController
+	var is_compatible_controller = _target is LCRoverController or _target is LCRoverJointController
 	
 	# Only process input if the target is a rover controller
 	if is_compatible_controller:
+		# Check if input is captured by UI
+		if not should_process_input():
+			if _target.has_method("set_motor"): _target.set_motor(0)
+			if _target.has_method("set_steering"): _target.set_steering(0)
+			if _target.has_method("set_crab_steering"): _target.set_crab_steering(0)
+			if _target.has_method("set_brake"): _target.set_brake(0)
+			return
+
 		# Process movement input
 		var motor_input = Input.get_action_strength("move_forward") - Input.get_action_strength("move_backward")
 		var steering_input = Input.get_action_strength("move_right") - Input.get_action_strength("move_left")
+		var crab_input = Input.get_action_strength("crab_right") - Input.get_action_strength("crab_left")
 		var brake_input = Input.get_action_strength("brake")
 		
 		# Process gamepad input if available
@@ -63,10 +65,9 @@ func _input(_event):
 		
 		if _target.has_method("set_steering"):
 			_target.set_steering(steering_input * STEERING_SENSITIVITY)
+			
+		if _target.has_method("set_crab_steering"):
+			_target.set_crab_steering(crab_input * STEERING_SENSITIVITY)
 		
 		if _target.has_method("set_brake"):
-			_target.set_brake(brake_input)
-		
-		# Print debug info - only for key presses to reduce spam
-		if _event is InputEventKey and _event.pressed and not _event.echo:
-			print("RoverInputAdapter: Input sent to ", _target.name) 
+			_target.set_brake(brake_input) 

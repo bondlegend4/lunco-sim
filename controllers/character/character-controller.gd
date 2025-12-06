@@ -29,6 +29,9 @@ var root_motion = Transform3D()
 
 @onready var gravity = ProjectSettings.get_setting("physics/3d/default_gravity") * ProjectSettings.get_setting("physics/3d/default_gravity_vector")
 
+@export var use_root_motion: bool = true
+@export var move_speed: float = 5.0
+
 #----------------------------------------
 
 var aim_rotation
@@ -49,7 +52,8 @@ func _ready():
 		character_body = get_parent()
 
 func _physics_process(delta: float):	
-	if is_multiplayer_authority():
+	# Check if we have authority over the parent entity (the character body that contains this controller)
+	if has_authority():
 		apply_input(delta)
 		
 func apply_input(delta: float):
@@ -119,7 +123,12 @@ func apply_input(delta: float):
 			orientation.basis = Basis(q_from.slerp(q_to, delta * ROTATION_INTERPOLATE_SPEED))
 
 	# Apply root motion to orientation.
-	orientation *= root_motion #????? What's happening here?
+	if use_root_motion:
+		orientation *= root_motion #????? What's happening here?
+	else:
+		var target_dir = (camera_x * motion.x + camera_z * motion.y)
+		orientation.origin += target_dir * move_speed * delta
+
 	do_move(delta)
 	orientation.origin = Vector3() # Clear accumulated root motion displacement (was applied to speed).
 	orientation = orientation.orthonormalized() # Orthonormalize orientation.
