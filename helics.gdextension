@@ -1,0 +1,12 @@
+[configuration]
+entry_symbol = "gdext_rust_init"
+compatibility_minimum = 4.1
+reloadable = true
+
+[libraries]
+macos.debug = "res://bin/libhelics_bindings.macos.framework/libhelics_bindings.macos.dylib"
+macos.release = "res://bin/libhelics_bindings.macos.framework/libhelics_bindings.macos.dylib"
+windows.debug.x86_64 = "res://bin/helics_bindings.dll"
+windows.release.x86_64 = "res://bin/helics_bindings.dll"
+linux.debug.x86_64 = "res://bin/libhelics_bindings.so"
+linux.release.x86_64 = "res://bin/libhelics_bindings.so"
